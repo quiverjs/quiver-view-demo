@@ -12,6 +12,7 @@
     "url": "git@github.com:quiverjs/quiver-view-demo.git"
   },
   "dependencies": {
+    "lodash.sortby": "^4.6.1",
     "quiver-signal": "^1.0.6",
     "quiver-util": "^1.2.5",
     "quiver-view": "https://github.com/quiverjs/quiver-view.git"

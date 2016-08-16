@@ -1,34 +1,16 @@
 import { ImmutableMap, extract } from 'quiver-util/immutable'
 import { h, combineRender } from 'quiver-view'
-import { constantSignal } from 'quiver-signal'
 
-import { renderNameForm } from './form'
-import { renderGreet } from './greet'
-import { renderCounter } from './counter'
+import { createUserManager } from './user-manager'
+import { renderUserActions } from './action'
+import { sortUserMapSignal } from './sort'
 
 export const renderApp = () => {
-  const [formDom, nameSignal] = renderNameForm()
-  const greetDom = renderGreet(nameSignal)
-  const counterDom = renderCounter()
+  const userManager = createUserManager()
 
-  const childrenSignals = ImmutableMap({
-    form: formDom,
-    greet: greetDom,
-    counter: counterDom
-  })
+  const [userActionsVdom, sortKeySignal, createUserSignal] = renderUserActions()
 
-  const argsSignal = constantSignal()
+  const usersSignal = sortUserMapSignal(userManager, sortKeySignal)
 
-  return combineRender(argsSignal, childrenSignals,
-    (args, children) => {
-      const { form, greet, counter } = children::extract()
-
-      return (
-        <div id='app'>
-          { greet }
-          { form }
-          { counter }
-        </div>
-      )
-    })
+  const [usersVdom, selectedUserSignal] = renderUsers(usersSignal)
 }
