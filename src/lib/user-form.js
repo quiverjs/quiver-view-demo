@@ -2,13 +2,11 @@ import { h, renderSignal } from 'quiver-view'
 
 export const renderUserForm = (userSignal, userSetter) =>
   renderSignal(userSignal, user => {
-
-
     const name = user.get('name')
 
     const onNameChanged = ev => {
-        const newName = ev.target.value
-        userSetter.setName(newName)
+      const newName = ev.target.value
+      userSetter.setName(newName)
     }
 
     return (

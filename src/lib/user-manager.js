@@ -22,7 +22,7 @@ export const createUserManager = () => {
     const [userSignal, setter] = valueSignal(user)
 
     userMap = userMap.set(userId, userSignal)
-    uesrMapSetter.setValue(userMap)
+    userMapSetter.setValue(userMap)
 
     const setName = name => {
       user = user.set('name', name)
@@ -47,12 +47,12 @@ export const createUserManager = () => {
       decrementScore
     }
 
-    return [userSignal, usersetter]
+    return [userSignal, userSetter]
   }
 
   return {
     createUser,
     getUserSignal,
-    userMapsignal
+    userMapSignal
   }
 }

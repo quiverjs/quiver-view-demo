@@ -1,37 +1,14 @@
 import { ImmutableMap } from 'quiver-util/immutable'
 
-import { valueSignal, flattenSignal } from 'quiver-signal'
+import { valueSignal, constantSignal, flattenSignal } from 'quiver-signal'
 
 import {
   h, renderSignal,
-  constantSignal, renderListSignal
+  renderListSignal
 } from 'quiver-view'
 
-const nestedSignal = (initialSignal) => {
-  let signalMap = ImmutableMap()
-  if(initialSignal) {
-    signalMap = signalMap.set('innerSignal', initialSignal)
-  }
-
-  const [signalSignal, signalSetter] = valueSignal(signalMap)
-
-  const setSignal = innerSignal => {
-    signalMap = signalMap.set('innerSignal', innerSignal)
-    signalSetter.setValue(signalMap)
-  }
-
-  const resultSignal = flattenSignal(signalSignal)
-    ::map(resultMap => resultMap.get('innerSignal'))
-
-  return [resultSignal, setSignal]
-}
-
 export const renderUsers = usersSignal => {
-  const [selectedUserSignal, setUserSignal] = nestedSignal()
-
   const renderUserSignal = (userSignal) => {
-    const onSelect = () => setSelected(userSignal)
-
     return renderSignal(userSignal, user => {
       const userId = user.get('userId')
       const name = user.get('name')
@@ -48,22 +25,25 @@ export const renderUsers = usersSignal => {
             <span className='label'>Score: </span>
             <span>{ score }</span>
           </div>
-          <button onClick={onSelect}>Edit User</button>
+          <button>Edit User</button>
         </div>
       )
     })
   }
 
-  const usersVdom = renderListSignal(
+  const usersVdomSignal = renderListSignal(
     constantSignal(),
     usersSignal,
     renderUserSignal,
     (_, userVdoms) => {
-      <div className='users'>
-        { userVdoms }
-      </div>
+      console.log('userVdoms:', userVdoms)
+      return (
+        <div className='users'>
+          { [...userVdoms.values()].map(([vdom]) => vdom) }
+        </div>
+      )
     }
   )
 
-  return [usersVdom, selectedUserSignal]
+  return [usersVdomSignal]
 }
