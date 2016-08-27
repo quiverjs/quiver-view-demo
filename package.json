@@ -12,10 +12,11 @@
     "url": "git@github.com:quiverjs/quiver-view-demo.git"
   },
   "dependencies": {
+    "haikunator": "^1.2.3",
     "lodash.sortby": "^4.6.1",
-    "quiver-signal": "^1.0.6",
     "quiver-util": "^1.2.5",
-    "quiver-view": "https://github.com/quiverjs/quiver-view.git"
+    "quiver-signal": "1.1.0",
+    "quiver-view": "quiverjs/quiver-view"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",

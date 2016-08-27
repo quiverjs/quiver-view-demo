@@ -1,49 +1,64 @@
-import { ImmutableMap } from 'quiver-util/immutable'
-
-import { valueSignal, constantSignal, flattenSignal } from 'quiver-signal'
+import { constantSignal } from 'quiver-signal'
 
 import {
   h, renderSignal,
-  renderListSignal
+  renderScsa, renderSmScpvc
 } from 'quiver-view'
 
-export const renderUsers = usersSignal => {
-  const renderUserSignal = (userSignal) => {
-    return renderSignal(userSignal, user => {
-      const userId = user.get('userId')
-      const name = user.get('name')
-      const score = user.get('score')
 
-      return (
-        <div className='user'>
-          <h2>{name}</h2>
-          <div>
-            <span className='label'>User ID: </span>
-            <span>{ userId }</span>
-          </div>
-          <div>
-            <span className='label'>Score: </span>
-            <span>{ score }</span>
-          </div>
-          <button>Edit User</button>
-        </div>
-      )
-    })
-  }
+// renderUsers ::
+//     Signal Map Signal User ->
+//     Signal Pair Vdom Map User
+export const renderUsers = smsu => {
+  // smsu :: Signal Map Signal User
 
-  const usersVdomSignal = renderListSignal(
+  // renderScsca ::
+  //     Signal Container Signal a ->
+  //     (Signal a -> Signal (Pair Vdom a)) ->
+  //     Signal Container Pair Vdom a
+
+  // smpvu :: Signal Map Pair Vdom User
+  const smpvu = renderScsa(
+    smsu,
+    (userSignal) =>
+      renderSignal(userSignal, user => {
+        const userId = user.get('userId')
+        const name = user.get('name')
+        const score = user.get('score')
+
+        return (
+          <div className='user'>
+            <h2>{name}</h2>
+            <div>
+              <span className='label'>User ID: </span>
+              <span>{ userId }</span>
+            </div>
+            <div>
+              <span className='label'>Score: </span>
+              <span>{ score }</span>
+            </div>
+            <button>Edit User</button>
+          </div>
+        )
+      }))
+
+  // spvmu :: Signal Pair Vdom Map User
+  const spvmu = renderSmScpvc(
     constantSignal(),
-    usersSignal,
-    renderUserSignal,
-    (_, userVdoms) => {
-      console.log('userVdoms:', userVdoms)
+    smpvu,
+    (_, mpvu) => {
+      // mpvu :: Map Pair Vdom User
+
+      const userVdoms = [...mpvu.values()]
+        .map(([vdom]) => vdom)
+
       return (
         <div className='users'>
-          { [...userVdoms.values()].map(([vdom]) => vdom) }
+          { userVdoms }
         </div>
       )
     }
   )
 
-  return [usersVdomSignal]
+  return [spvmu]
 }

@@ -1,7 +1,7 @@
-import { h, combineRender } from 'quiver-view'
+import { h, renderSmCspvc } from 'quiver-view'
 import { constantSignal } from 'quiver-signal'
 import { subscribeGenerator } from 'quiver-signal/method'
-import { ImmutableMap, extract } from 'quiver-util/immutable'
+import { ImmutableMap } from 'quiver-util/immutable'
 
 import { createUserManager } from './user-manager'
 import { renderUserActions } from './action'
@@ -10,7 +10,7 @@ import { renderUsers } from './users'
 export const renderApp = () => {
   const userManager = createUserManager()
 
-  const [actionsVdomSignal, sortKeySignal, createUserSignal] = renderUserActions()
+  const [actionsSpva, sortKeySignal, createUserSignal] = renderUserActions()
 
   createUserSignal::subscribeGenerator(function*() {
     while(true) {
@@ -20,17 +20,24 @@ export const renderApp = () => {
     }
   })
 
-  const [usersVdomSignal, selectedUserSignal] = renderUsers(userManager.userMapSignal)
+  const [usersSpva, selectedUserSignal] = renderUsers(userManager.smsu)
 
-  return combineRender(
+  // renderSmCspvc ::
+  //     Signal main ->
+  //     Container Signal Pair Vdom child ->
+  //     (main -> Container Pair Vdom child -> Vdom) ->
+  //     Signal Pair Vdom (Pair main (Container child))
+  return renderSmCspvc(
     constantSignal(),
     ImmutableMap({
-      actions: actionsVdomSignal,
-      users: usersVdomSignal
+      actions: actionsSpva,
+      users: usersSpva
     }),
-    (_, vdomMap) => {
-      const [actionsVdom] = vdomMap.get('actions')
-      const [usersVdom] = vdomMap.get('users')
+    (_, mpvc) => {
+      // mpvc :: Map Pair Vdom child
+
+      const [actionsVdom] = mpvc.get('actions')
+      const [usersVdom] = mpvc.get('users')
 
       return (
         <div className='app'>

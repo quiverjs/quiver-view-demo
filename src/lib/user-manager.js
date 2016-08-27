@@ -1,28 +1,33 @@
+import haikunator from 'haikunator'
 import { valueSignal } from 'quiver-signal'
 import { ImmutableMap } from 'quiver-util/immutable'
 
 export const createUserManager = () => {
   let nextUserId = 1
 
-  let userMap = ImmutableMap()
-  const [userMapSignal, userMapSetter] = valueSignal(userMap)
+  // msu :: Map Signal User
+  let msu = ImmutableMap()
 
+  // smsu :: Signal Map Signal User
+  const [smsu, smsuSetter] = valueSignal(msu)
+
+  // getUserSignal :: UserId -> Signal User
   const getUserSignal = userId =>
-    userMap.get(userId)
+    msu.get(userId)
 
   const createUser = () => {
     const userId = nextUserId++
 
     let user = ImmutableMap({
       userId,
-      name: 'anonymous',
+      name: haikunator(),
       score: 0
     })
 
-    const [userSignal, setter] = valueSignal(user)
+    const [userSignal, signalSetter] = valueSignal(user)
 
-    userMap = userMap.set(userId, userSignal)
-    userMapSetter.setValue(userMap)
+    msu = msu.set(userId, userSignal)
+    smsuSetter.setValue(msu)
 
     const setName = name => {
       user = user.set('name', name)
@@ -32,13 +37,13 @@ export const createUserManager = () => {
     const incrementScore = () => {
       const score = user.get('score')
       user = user.set('score', score+1)
-      setter.setValue(user)
+      signalSetter.setValue(user)
     }
 
     const decrementScore = () => {
       const score = user.get('score')
       user = user.set('score', score-1)
-      setter.setValue(user)
+      signalSetter.setValue(user)
     }
 
     const userSetter = {
@@ -53,6 +58,6 @@ export const createUserManager = () => {
   return {
     createUser,
     getUserSignal,
-    userMapSignal
+    msu, smsu
   }
 }
