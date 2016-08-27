@@ -20,7 +20,7 @@ export const renderApp = () => {
     }
   })
 
-  const [usersSpva, selectedUserSignal] = renderUsers(userManager.smsu)
+  const [usersSpva, selectedUserSignal] = renderUsers(sortKeySignal, userManager.smsu)
 
   // renderSmCspvc ::
   //     Signal main ->
