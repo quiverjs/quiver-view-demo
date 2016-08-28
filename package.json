@@ -15,8 +15,8 @@
     "haikunator": "^1.2.3",
     "lodash.sortby": "^4.6.1",
     "quiver-util": "^1.2.5",
-    "quiver-signal": "1.1.0",
-    "quiver-view": "quiverjs/quiver-view"
+    "quiver-signal": "^1.1.1",
+    "quiver-view": "^1.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",

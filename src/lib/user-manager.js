@@ -1,19 +1,19 @@
 import haikunator from 'haikunator'
+import { error } from 'quiver-util/error'
 import { valueSignal } from 'quiver-signal'
-import { ImmutableMap } from 'quiver-util/immutable'
+import { ImmutableMap, ImmutableList } from 'quiver-util/immutable'
 
 export const createUserManager = () => {
   let nextUserId = 1
 
-  // msu :: Map Signal User
-  let msu = ImmutableMap()
+  // userTable :: Map UserId { User, (Signal User), (SignalSetter User) }
+  const userTable = new Map()
 
-  // smsu :: Signal Map Signal User
-  const [smsu, smsuSetter] = valueSignal(msu)
+  // lsu :: List Signal User
+  let lsu = ImmutableList()
 
-  // getUserSignal :: UserId -> Signal User
-  const getUserSignal = userId =>
-    msu.get(userId)
+  // slsu :: Signal List Signal User
+  const [slsu, slsuSetter] = valueSignal(lsu)
 
   const createUser = () => {
     const userId = nextUserId++
@@ -24,40 +24,65 @@ export const createUserManager = () => {
       score: 0
     })
 
-    const [userSignal, signalSetter] = valueSignal(user)
+    const [userSignal, userSetter] = valueSignal(user)
 
-    msu = msu.set(userId, userSignal)
-    smsuSetter.setValue(msu)
+    userTable.set(userId, {
+      user, userSignal, userSetter
+    })
 
-    const setName = name => {
-      user = user.set('name', name)
-      setter.setValue(user)
-    }
+    lsu = lsu.push(userSignal)
+    slsuSetter.setValue(lsu)
 
-    const incrementScore = () => {
-      const score = user.get('score')
-      user = user.set('score', score+1)
-      signalSetter.setValue(user)
-    }
+    return userSignal
+  }
 
-    const decrementScore = () => {
-      const score = user.get('score')
-      user = user.set('score', score-1)
-      signalSetter.setValue(user)
-    }
+  const getUserEntry = (userId) => {
+    const entry = userTable.get(userId)
+    if(!entry) throw error(404, 'user not found')
+    return entry
+  }
 
-    const userSetter = {
-      setName,
-      incrementScore,
-      decrementScore
-    }
+  const updateUser = (userEntry, newUser) => {
+    userEntry.user = newUser
+    const { userSetter } = userEntry
+    userSetter.setValue(newUser)
+  }
 
-    return [userSignal, userSetter]
+  const setUserName = (userId, name) => {
+    const entry = getUserEntry(userId)
+    const { user } = entry
+
+    const newUser = user.set('name', name)
+
+    updateUser(entry, newUser)
+  }
+
+  const incrementUserScore = userId => {
+    const entry = getUserEntry(userId)
+    const { user } = entry
+
+    const score = user.get('score')
+    const newUser = user.set('score', score+1)
+
+    updateUser(entry, newUser)
+  }
+
+  const decrementUserScore = userId => {
+    const entry = getUserEntry(userId)
+    const { user } = entry
+
+    const score = user.get('score')
+    const newUser = user.set('score', score-1)
+
+    updateUser(entry, newUser)
   }
 
   return {
     createUser,
-    getUserSignal,
-    msu, smsu
+    slsu,
+
+    setUserName,
+    incrementUserScore,
+    decrementUserScore
   }
 }

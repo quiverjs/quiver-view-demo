@@ -10,12 +10,12 @@ import {
 // renderUsers ::
 //     Signal String
 //     Signal Map Signal User ->
-//     Signal Pair Vdom Map User
+//     (Signal Pair Vdom Map User, Signal Signal User)
 export const renderUsers = (sortKeySignal, smsu) => {
   // smsu :: Signal Map Signal User
 
-  // selectedSsu :: Signal Signal User
-  const [selectedSsu, ssuSetter] = valueSignal()
+  // selectedUserSsu :: Signal Signal User
+  const [selectedUserSsu, ssuSetter] = valueSignal()
 
   // renderScsca ::
   //     Signal Container Signal a ->
@@ -59,8 +59,6 @@ export const renderUsers = (sortKeySignal, smsu) => {
       // lpvu :: List Pair Vdom User
       const lpvu = [...mpvu.values()]
 
-      console.log('sort list by', sortKey, lpvu)
-
       const sortedLpvu = sortBy(lpvu,
         ([,user]) => user.get(sortKey))
 
@@ -75,5 +73,5 @@ export const renderUsers = (sortKeySignal, smsu) => {
     }
   )
 
-  return [spvmu, selectedSsu]
+  return [spvmu, selectedUserSsu]
 }
