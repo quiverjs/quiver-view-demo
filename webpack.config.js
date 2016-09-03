@@ -22,7 +22,10 @@ module.exports = {
         loader: 'babel-loader',
         query: {
           presets: [
-            'es2015', 'quiver-babel/node-jsx-preset'
+            'es2015', 'quiver-babel/node-preset'
+          ],
+          plugins: [
+            'babel-plugin-transform-react-jsx'
           ]
         }
       },

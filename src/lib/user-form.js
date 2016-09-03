@@ -1,3 +1,4 @@
+import React from 'react'
 import { flattenSsa, eventSignal } from 'quiver-signal'
 import { h, renderSignal } from 'quiver-view'
 
@@ -47,19 +48,19 @@ export const renderUserForm = (selectedUserSsu) => {
       })
 
     return (
-      <form className='user-form' onsubmit={onSubmit}>
+      <form className='user-form' onSubmit={onSubmit}>
         <h2>Edit User</h2>
 
         <label>Name:</label>
-        <input id='name-input' name='name' type='text' value={name} />
+        <input id='name-input' name='name' type='text' defaultValue={name} />
 
         <button type='submit'>Change Name</button>
 
-        <button onclick={onIncrement}>
+        <button onClick={onIncrement}>
           Add Score
         </button>
 
-        <button onclick={onDecrement}>
+        <button onClick={onDecrement}>
           Minus Score
         </button>
       </form>

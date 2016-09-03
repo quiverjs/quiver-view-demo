@@ -1,41 +1,30 @@
+import React from 'react'
 import { h, renderSmCspvc } from 'quiver-view'
 import { constantSignal } from 'quiver-signal'
-import { listen } from 'quiver-signal/method'
 import { ImmutableMap } from 'quiver-util/immutable'
 
 import { createUserManager } from './user-manager'
 import { renderUserActions } from './action'
 import { renderUsers } from './users'
 import { renderUserForm } from './user-form'
+import { pipeActionSignals } from './pipe'
 
 export const renderApp = () => {
   const userManager = createUserManager()
 
-  const [actionsSpva, sortKeySignal, createUserSignal] = renderUserActions()
+  const [
+    actionsSpva, sortKeySignal, createUserSignal
+  ] = renderUserActions()
 
-  createUserSignal::listen(() =>
-    userManager.createUser())
+  const [
+    usersSpva, selectedUserSsu
+  ] = renderUsers(sortKeySignal, userManager.slsu)
 
-  const [usersSpva, selectedUserSsu] = renderUsers(sortKeySignal, userManager.slsu)
+  const [
+    formSpva, editEventSignal
+  ] = renderUserForm(selectedUserSsu)
 
-  const [formSpva, editEventSignal] = renderUserForm(selectedUserSsu)
-
-  editEventSignal::listen(ev => {
-    console.log('edit event:', ev)
-    const { userId, action } = ev
-
-    if(action === 'change_name') {
-      const { newName } = ev
-      userManager.setUserName(userId, newName)
-
-    } else if(action === 'increment_score') {
-      userManager.incrementUserScore(userId)
-
-    } else if(action === 'decrement_score') {
-      userManager.decrementUserScore(userId)
-
-    }
-  })
+  pipeActionSignals(userManager, createUserSignal, editEventSignal)
 
   // renderSmCspvc ::
   //     Signal main ->

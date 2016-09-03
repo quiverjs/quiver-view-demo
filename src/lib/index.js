@@ -1,7 +1,12 @@
 import 'babel-polyfill'
-
+import ReactDOM from 'react-dom'
 import { renderApp } from './app'
-import { mountVdom } from 'quiver-view'
+import { spvaToReactElement } from 'quiver-view'
 
-const vdomSignal = renderApp()
-mountVdom(document.body, vdomSignal)
+const spva = renderApp()
+const reactElement = spvaToReactElement(spva)
+
+ReactDOM.render(
+  reactElement,
+  document.getElementById('main')
+)

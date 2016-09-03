@@ -1,3 +1,4 @@
+import React from 'react'
 import sortBy from 'lodash.sortby'
 import { valueSignal } from 'quiver-signal'
 
@@ -45,7 +46,7 @@ export const renderUsers = (sortKeySignal, smsu) => {
               <span className='label'>Score: </span>
               <span>{ score }</span>
             </div>
-            <button onclick={onUserSelect}>Edit User</button>
+            <button onClick={onUserSelect}>Edit User</button>
           </div>
         )
       }))

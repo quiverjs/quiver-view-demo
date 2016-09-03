@@ -14,9 +14,10 @@
   "dependencies": {
     "haikunator": "^1.2.3",
     "lodash.sortby": "^4.6.1",
-    "quiver-util": "^1.2.5",
     "quiver-signal": "^1.1.1",
-    "quiver-view": "^1.0.0"
+    "quiver-util": "^1.2.5",
+    "quiver-view": "^1.0.1",
+    "react-dom": "^15.3.1"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",
